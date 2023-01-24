@@ -8,6 +8,6 @@ app.use(express.static("public"));
 
 app.get("/", (req, res) => res.send("Navigate to /send or /routes"));
 
-app.get("/send", (req, res) => res.sendFile(path.join(__dirname, "public/send.html")));
+app.get("/notes", (req, res) => res.sendFile(path.join(__dirname, "public/notes.html")));
 
 app.listen(process.env.PORT || 5000);
