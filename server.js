@@ -31,17 +31,12 @@ app.post("/api/notes", (req, res) => {
     newDb.push(newNote);
     fs.writeFile(
       "./db/db.json",
-      JSON.stringify(newDb),
+      JSON.stringify(newDb, null, 2),
       (error) => error && console.log(`Error adding note: ${error}`)
     );
-
-    let response = {
-      status: "success",
-      data: req.body,
-    };
-    res.status(200).json(response);
+    res.send('Note added successfully!');
   } else {
-    res.status(404).send("No Body");
+    res.send("Unable to add note.");
   }
 });
 
@@ -52,7 +47,7 @@ app.delete("/api/notes/:id", (req, res) => {
     const newDb = db.filter((note) => note.id !== id);
     fs.writeFile(
       "./db/db.json",
-      JSON.stringify(newDb),
+      JSON.stringify(newDb, null, 2),
       (error) => error && console.log(`Error Deleting note: ${error}`)
     );
     res.status(200).send("Note deleted successfully!");
