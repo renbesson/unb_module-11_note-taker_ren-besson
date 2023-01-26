@@ -50,9 +50,9 @@ app.delete("/api/notes/:id", (req, res) => {
       JSON.stringify(newDb, null, 2),
       (error) => error && console.log(`Error Deleting note: ${error}`)
     );
-    res.status(200).send("Note deleted successfully!");
+    res.send("Note deleted successfully!");
   } else {
-    res.status(404).send("Unable to delete note.");
+    res.send("Unable to delete note.");
   }
 });
 
