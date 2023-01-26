@@ -1,5 +1,9 @@
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
+const { nanoid } = require("nanoid");
+
+var id = nanoid();
 
 const db = require("./db/db.json");
 
@@ -7,6 +11,10 @@ const app = express();
 const PORT = 5000;
 
 app.use(express.static("public"));
+
+// Middleware for parsing application/json and urlencoded data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => res.send("Navigate to /send or /routes"));
 
@@ -17,11 +25,39 @@ app.get("/api/notes", (req, res) => {
 });
 
 app.post("/api/notes", (req, res) => {
-  res.json(req.body);
-  console.log(req.method);
-
   if (req.body) {
-    console.log(req.body);
+    let newNote = { ...req.body, id: nanoid() };
+    let newDb = db;
+    newDb.push(newNote);
+    fs.writeFile(
+      "./db/db.json",
+      JSON.stringify(newDb),
+      (error) => error && console.log(`Error adding note: ${error}`)
+    );
+
+    let response = {
+      status: "success",
+      data: req.body,
+    };
+    res.status(200).json(response);
+  } else {
+    res.status(404).send("No Body");
+  }
+});
+
+app.delete("/api/notes/:id", (req, res) => {
+  if (req.params.id) {
+    const id = req.params.id;
+
+    const newDb = db.filter((note) => note.id !== id);
+    fs.writeFile(
+      "./db/db.json",
+      JSON.stringify(newDb),
+      (error) => error && console.log(`Error Deleting note: ${error}`)
+    );
+    res.status(200).send("Note deleted successfully!");
+  } else {
+    res.status(404).send("Unable to delete note.");
   }
 });
 
